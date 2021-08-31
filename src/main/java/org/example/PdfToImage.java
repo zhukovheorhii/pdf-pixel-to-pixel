@@ -7,14 +7,15 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.UUID;
 
 public class PdfToImage {
-    public static String convert(String pdfFilePath, int pageIndex) {
+    public static String convert(InputStream inputStream, int pageIndex) {
         PDDocument document = null;
         try {
-            document = PDDocument.load(new File(pdfFilePath));
+            document = PDDocument.load(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }

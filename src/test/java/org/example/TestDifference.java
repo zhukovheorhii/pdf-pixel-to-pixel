@@ -6,6 +6,8 @@ import ru.yandex.qatools.ashot.comparison.ImageDiff;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -13,9 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDifference {
     @Test
-    void shouldFindDifferenceInPDFs() {
-        String actualPdfToImage = PdfToImage.convert("./src/test/resources/testresources/google_ua.pdf", 0);
-        String expectedPdfToImage = PdfToImage.convert("./src/test/resources/testresources/google_ru.pdf", 0);
+    void shouldFindDifferenceInPDFs() throws FileNotFoundException {
+        File actualPdfFile = new File("./src/test/resources/testresources/google_ua.pdf");
+        File expectedPdfFile = new File("./src/test/resources/testresources/google_ru.pdf");
+
+        String actualPdfToImage = PdfToImage.convert(new FileInputStream(actualPdfFile), 0);
+        String expectedPdfToImage = PdfToImage.convert(new FileInputStream(expectedPdfFile), 0);
 
         BufferedImage actualImage = null;
         try {
@@ -36,9 +41,12 @@ public class TestDifference {
     }
 
     @Test
-    void shouldNotFindDifferenceInPDFs() {
-        String actualPdfToImage = PdfToImage.convert("./src/test/resources/testresources/google_ua.pdf", 0);
-        String expectedPdfToImage = PdfToImage.convert("./src/test/resources/testresources/google_ua.pdf", 0);
+    void shouldNotFindDifferenceInPDFs() throws FileNotFoundException {
+        File actualPdfFile = new File("./src/test/resources/testresources/google_ua.pdf");
+        File expectedPdfFile = new File("./src/test/resources/testresources/google_ua.pdf");
+
+        String actualPdfToImage = PdfToImage.convert(new FileInputStream(actualPdfFile), 0);
+        String expectedPdfToImage = PdfToImage.convert(new FileInputStream(expectedPdfFile), 0);
 
         BufferedImage actualImage = null;
         try {
