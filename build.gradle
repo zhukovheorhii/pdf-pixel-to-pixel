@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.7.2")
+    testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+
+    implementation("org.apache.pdfbox:pdfbox:2.0.24")
+    implementation("ru.yandex.qatools.ashot:ashot:1.5.4")
+}
+
+test {
+    useJUnitPlatform()
+}
