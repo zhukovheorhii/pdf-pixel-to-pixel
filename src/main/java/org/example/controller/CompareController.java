@@ -15,7 +15,6 @@ import ru.yandex.qatools.ashot.comparison.ImageDiff;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 
 
@@ -28,24 +27,10 @@ public class CompareController {
             @RequestParam(value = "pageIndexExpectedPdf", required = false, defaultValue = "0") int pageIndexExpectedPdf,
             @RequestParam(value = "pageIndexActualPdf", required = false, defaultValue = "0") int pageIndexActualPdf
     ) throws IOException {
-        String actualPdfToImage = PdfToImage.convert(actualPdf.getInputStream(), pageIndexActualPdf);
-        String expectedPdfToImage = PdfToImage.convert(expectedPdf.getInputStream(), pageIndexExpectedPdf);
+        BufferedImage actualPdfToImage = PdfToImage.convert(actualPdf.getInputStream(), pageIndexActualPdf);
+        BufferedImage expectedPdfToImage = PdfToImage.convert(expectedPdf.getInputStream(), pageIndexExpectedPdf);
 
-        BufferedImage actualImage = null;
-        try {
-            actualImage = ImageIO.read(new File(actualPdfToImage));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        BufferedImage expectedImage = null;
-        try {
-            expectedImage = ImageIO.read(new File(expectedPdfToImage));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        ImageDiff diff = ImageComparator.compare(expectedImage, actualImage);
+        ImageDiff diff = ImageComparator.compare(expectedPdfToImage, actualPdfToImage);
 
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         ImageIO.write(diff.getMarkedImage(), "jpeg", byteArrayStream);
