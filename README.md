@@ -12,6 +12,8 @@ To run the app execute `./gradlew bootRun`
 
 ## CURL to compare Images
 
+Now only JPEG is supported.
+
 `curl --location --request POST 'http://localhost:8080/compareImage' \
 --form 'first=@"FILE_1.jpg"' \
 --form 'second=@"FILE_2.jpg"'`
