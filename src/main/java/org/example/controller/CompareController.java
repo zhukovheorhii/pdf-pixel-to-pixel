@@ -21,18 +21,30 @@ import java.io.IOException;
 
 @RestController
 public class CompareController {
-    @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity upload(
-            @RequestPart("expectedPdf") MultipartFile expectedPdf,
-            @RequestPart("actualPdf") MultipartFile actualPdf,
-            @RequestParam(value = "pageIndexExpectedPdf", required = false, defaultValue = "0") int pageIndexExpectedPdf,
-            @RequestParam(value = "pageIndexActualPdf", required = false, defaultValue = "0") int pageIndexActualPdf
+    @PostMapping(path = "/comparePdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity uploadPdf(
+            @RequestPart("first") MultipartFile first,
+            @RequestPart("second") MultipartFile second,
+            @RequestParam(value = "firstFilePageIndex", required = false, defaultValue = "0") int firstFilePageIndex,
+            @RequestParam(value = "secondFilePageIndex", required = false, defaultValue = "0") int secondFilePageIndex
     ) throws IOException {
-        BufferedImage actualPdfToImage = PdfToImage.convert(actualPdf.getInputStream(), pageIndexActualPdf);
-        BufferedImage expectedPdfToImage = PdfToImage.convert(expectedPdf.getInputStream(), pageIndexExpectedPdf);
+        BufferedImage actualPdfToImage = PdfToImage.convert(second.getInputStream(), secondFilePageIndex);
+        BufferedImage expectedPdfToImage = PdfToImage.convert(first.getInputStream(), firstFilePageIndex);
 
         ImageDiff diff = ImageComparator.compare(expectedPdfToImage, actualPdfToImage);
+        return checkDiff(diff);
+    }
 
+    @PostMapping(path = "/compareImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity uploadImage(
+            @RequestPart("first") MultipartFile first,
+            @RequestPart("second") MultipartFile second
+    ) throws IOException {
+        ImageDiff diff = ImageComparator.compare(ImageIO.read(first.getInputStream()), ImageIO.read(second.getInputStream()));
+        return checkDiff(diff);
+    }
+
+    private ResponseEntity checkDiff(ImageDiff diff) throws IOException {
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         ImageIO.write(diff.getMarkedImage(), "jpeg", byteArrayStream);
         if (diff.hasDiff()) {
@@ -42,8 +54,7 @@ public class CompareController {
         } else {
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("Content-Type", MediaType.TEXT_PLAIN_VALUE);
-            return new ResponseEntity<String>("PDFs are equal!", headers, HttpStatus.OK);
+            return new ResponseEntity<String>("Files are equal!", headers, HttpStatus.OK);
         }
-
     }
 }

@@ -5,4 +5,4 @@ server:
 
 spring:
   application:
-    name: pdf-pixel-to-pixel
+    name: pixel-to-pixel
